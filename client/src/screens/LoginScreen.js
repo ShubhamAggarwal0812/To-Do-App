@@ -5,6 +5,7 @@ import axios from 'axios';
 const LoginScreen = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [error, setError] = useState('');
   const navigate = useNavigate();
 
   const handleSubmit = async (e) => {
@@ -14,13 +15,16 @@ const LoginScreen = () => {
       localStorage.setItem('userInfo', JSON.stringify(data));
       navigate('/todos');
     } catch (error) {
-      console.error(error.response.data.message);
+      setError(error.response && error.response.data.message
+        ? error.response.data.message
+        : error.message);
     }
   };
 
   return (
     <div className="max-w-md mx-auto mt-10">
       <h1 className="text-2xl font-bold mb-5">Login</h1>
+      {error && <div className="bg-red-100 text-red-700 p-2 mb-4 rounded">{error}</div>}
       <form onSubmit={handleSubmit}>
         <div className="mb-4">
           <label className="block text-sm font-medium text-gray-700">Email</label>
