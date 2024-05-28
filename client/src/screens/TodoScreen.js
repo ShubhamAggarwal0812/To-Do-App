@@ -3,6 +3,8 @@ import axios from 'axios';
 
 const TodoScreen = () => {
   const [todos, setTodos] = useState([]);
+  const [filteredTodos, setFilteredTodos] = useState([]);
+  const [filter, setFilter] = useState('All');
   const [editing, setEditing] = useState(false);
   const [currentTodo, setCurrentTodo] = useState(null);
   const [formData, setFormData] = useState({
@@ -22,10 +24,15 @@ const TodoScreen = () => {
         },
       });
       setTodos(data);
+      setFilteredTodos(data);
     };
 
     fetchTodos();
   }, []);
+
+  useEffect(() => {
+    filterTodos();
+  }, [filter, todos]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -82,10 +89,20 @@ const TodoScreen = () => {
     setTodos(todos.map((todo) => (todo._id === id ? data : todo)));
   };
 
+  const filterTodos = () => {
+    let filtered = todos;
+    if (filter === 'Overdue') {
+      filtered = todos.filter(todo => new Date(todo.dueDate) < new Date());
+    } else if (filter === 'To Do' || filter === 'Done') {
+      filtered = todos.filter(todo => todo.status === filter);
+    }
+    setFilteredTodos(filtered);
+  };
+
   return (
     <div className="max-w-lg mx-auto mt-10">
       <h1 className="text-2xl font-bold mb-5">TODOs</h1>
-      <form onSubmit={handleSubmit}>
+      <form onSubmit={handleSubmit} className="bg-white p-4 rounded-lg shadow-md">
         <div className="mb-4">
           <label className="block text-sm font-medium text-gray-700">Title</label>
           <input
@@ -132,9 +149,24 @@ const TodoScreen = () => {
           {editing ? 'Update TODO' : 'Add TODO'}
         </button>
       </form>
+
+      <div className="mt-5">
+        <label className="block text-sm font-medium text-gray-700">Filter</label>
+        <select
+          className="mt-1 block w-full p-2 border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+          value={filter}
+          onChange={(e) => setFilter(e.target.value)}
+        >
+          <option value="All">All</option>
+          <option value="Overdue">Overdue</option>
+          <option value="To Do">To Do</option>
+          <option value="Done">Done</option>
+        </select>
+      </div>
+
       <ul className="mt-5">
-        {todos.map((todo) => (
-          <li key={todo._id} className="bg-gray-100 p-3 rounded-md mb-3">
+        {filteredTodos.map((todo) => (
+          <li key={todo._id} className="bg-white p-4 rounded-lg shadow-md mb-3">
             <h2 className="font-bold text-lg">{todo.title}</h2>
             <p>{todo.description}</p>
             <p className="text-sm text-gray-500">{todo.type} - {new Date(todo.dueDate).toLocaleDateString()}</p>
