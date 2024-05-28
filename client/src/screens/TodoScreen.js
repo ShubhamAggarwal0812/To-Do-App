@@ -3,10 +3,16 @@ import axios from 'axios';
 
 const TodoScreen = () => {
   const [todos, setTodos] = useState([]);
-  const [title, setTitle] = useState('');
-  const [description, setDescription] = useState('');
-  const [type, setType] = useState('Personal');
-  const [dueDate, setDueDate] = useState('');
+  const [editing, setEditing] = useState(false);
+  const [currentTodo, setCurrentTodo] = useState(null);
+  const [formData, setFormData] = useState({
+    title: '',
+    description: '',
+    type: 'Personal',
+    dueDate: '',
+  });
+
+  const { title, description, type, dueDate } = formData;
 
   useEffect(() => {
     const fetchTodos = async () => {
@@ -23,16 +29,57 @@ const TodoScreen = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    const { data } = await axios.post(
-      '/api/todos',
-      { title, description, type, dueDate },
-      {
+    if (editing) {
+      const { data } = await axios.put(`/api/todos/${currentTodo._id}`, formData, {
         headers: {
           Authorization: `Bearer ${JSON.parse(localStorage.getItem('userInfo')).token}`,
         },
-      }
-    );
-    setTodos([...todos, data]);
+      });
+      setTodos(todos.map((todo) => (todo._id === currentTodo._id ? data : todo)));
+      setEditing(false);
+    } else {
+      const { data } = await axios.post('/api/todos', formData, {
+        headers: {
+          Authorization: `Bearer ${JSON.parse(localStorage.getItem('userInfo')).token}`,
+        },
+      });
+      setTodos([...todos, data]);
+    }
+    setFormData({
+      title: '',
+      description: '',
+      type: 'Personal',
+      dueDate: '',
+    });
+  };
+
+  const handleEdit = (todo) => {
+    setEditing(true);
+    setCurrentTodo(todo);
+    setFormData({
+      title: todo.title,
+      description: todo.description,
+      type: todo.type,
+      dueDate: todo.dueDate,
+    });
+  };
+
+  const handleDelete = async (id) => {
+    await axios.delete(`/api/todos/${id}`, {
+      headers: {
+        Authorization: `Bearer ${JSON.parse(localStorage.getItem('userInfo')).token}`,
+      },
+    });
+    setTodos(todos.filter((todo) => todo._id !== id));
+  };
+
+  const handleMarkAsDone = async (id, status) => {
+    const { data } = await axios.put(`/api/todos/${id}`, { status }, {
+      headers: {
+        Authorization: `Bearer ${JSON.parse(localStorage.getItem('userInfo')).token}`,
+      },
+    });
+    setTodos(todos.map((todo) => (todo._id === id ? data : todo)));
   };
 
   return (
@@ -45,7 +92,7 @@ const TodoScreen = () => {
             type="text"
             className="mt-1 block w-full p-2 border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
             value={title}
-            onChange={(e) => setTitle(e.target.value)}
+            onChange={(e) => setFormData({ ...formData, title: e.target.value })}
           />
         </div>
         <div className="mb-4">
@@ -54,7 +101,7 @@ const TodoScreen = () => {
             type="text"
             className="mt-1 block w-full p-2 border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
             value={description}
-            onChange={(e) => setDescription(e.target.value)}
+            onChange={(e) => setFormData({ ...formData, description: e.target.value })}
           />
         </div>
         <div className="mb-4">
@@ -62,7 +109,7 @@ const TodoScreen = () => {
           <select
             className="mt-1 block w-full p-2 border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
             value={type}
-            onChange={(e) => setType(e.target.value)}
+            onChange={(e) => setFormData({ ...formData, type: e.target.value })}
           >
             <option value="Personal">Personal</option>
             <option value="Official">Official</option>
@@ -75,14 +122,14 @@ const TodoScreen = () => {
             type="date"
             className="mt-1 block w-full p-2 border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
             value={dueDate}
-            onChange={(e) => setDueDate(e.target.value)}
+            onChange={(e) => setFormData({ ...formData, dueDate: e.target.value })}
           />
         </div>
         <button
           type="submit"
           className="w-full bg-blue-500 text-white py-2 px-4 rounded-md hover:bg-blue-600"
         >
-          Add TODO
+          {editing ? 'Update TODO' : 'Add TODO'}
         </button>
       </form>
       <ul className="mt-5">
@@ -92,6 +139,24 @@ const TodoScreen = () => {
             <p>{todo.description}</p>
             <p className="text-sm text-gray-500">{todo.type} - {new Date(todo.dueDate).toLocaleDateString()}</p>
             <p className="text-sm text-gray-500">{todo.status}</p>
+            <button
+              className="mr-2 text-blue-500 hover:underline"
+              onClick={() => handleEdit(todo)}
+            >
+              Edit
+            </button>
+            <button
+              className="mr-2 text-red-500 hover:underline"
+              onClick={() => handleDelete(todo._id)}
+            >
+              Delete
+            </button>
+            <button
+              className={`mr-2 ${todo.status === 'Done' ? 'text-yellow-500' : 'text-green-500'} hover:underline`}
+              onClick={() => handleMarkAsDone(todo._id, todo.status === 'Done' ? 'To Do' : 'Done')}
+            >
+              {todo.status === 'Done' ? 'Undo' : 'Mark as Done'}
+            </button>
           </li>
         ))}
       </ul>
