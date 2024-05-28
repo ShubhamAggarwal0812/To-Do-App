@@ -1,23 +1,21 @@
-// server/server.js
-
 const express = require('express');
 const mongoose = require('mongoose');
 const cors = require('cors');
-const userRoutes = require('./routes/userRoutes');
-const todoRoutes = require('./routes/todoRoutes');
+const userRoutes = require('./routes/user-routes');
+const todoRoutes = require('./routes/todo-routes');
+const { handleErrors } = require('./utils/error-handler');
 require('dotenv').config();
 
 const app = express();
 
-// Middleware
 app.use(cors());
 app.use(express.json());
 
-// Routes
 app.use('/api/users', userRoutes);
 app.use('/api/todos', todoRoutes);
 
-// MongoDB connection
+app.use(handleErrors);
+
 mongoose.connect(process.env.MONGO_URI, {
     useNewUrlParser: true,
     useUnifiedTopology: true,

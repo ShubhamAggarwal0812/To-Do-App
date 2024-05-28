@@ -1,5 +1,3 @@
-// server/controllers/userController.js
-
 const User = require('../models/User');
 const jwt = require('jsonwebtoken');
 
@@ -9,8 +7,8 @@ const generateToken = (id) => {
     });
 };
 
-const registerUser = async (req, res) => {
-    const { name, email, password } = req.body;
+const createUser = async (req, res) => {
+    const { firstName, lastName, email, password } = req.body;
 
     const userExists = await User.findOne({ email });
 
@@ -19,7 +17,8 @@ const registerUser = async (req, res) => {
     }
 
     const user = await User.create({
-        name,
+        firstName,
+        lastName,
         email,
         password,
     });
@@ -27,7 +26,8 @@ const registerUser = async (req, res) => {
     if (user) {
         res.status(201).json({
             _id: user._id,
-            name: user.name,
+            firstName: user.firstName,
+            lastName: user.lastName,
             email: user.email,
             token: generateToken(user._id),
         });
@@ -44,7 +44,8 @@ const loginUser = async (req, res) => {
     if (user && (await user.matchPassword(password))) {
         res.json({
             _id: user._id,
-            name: user.name,
+            firstName: user.firstName,
+            lastName: user.lastName,
             email: user.email,
             token: generateToken(user._id),
         });
@@ -59,7 +60,8 @@ const getUserProfile = async (req, res) => {
     if (user) {
         res.json({
             _id: user._id,
-            name: user.name,
+            firstName: user.firstName,
+            lastName: user.lastName,
             email: user.email,
         });
     } else {
@@ -67,4 +69,4 @@ const getUserProfile = async (req, res) => {
     }
 };
 
-module.exports = { registerUser, loginUser, getUserProfile };
+module.exports = { createUser, loginUser, getUserProfile };
