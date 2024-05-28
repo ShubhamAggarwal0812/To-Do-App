@@ -11,7 +11,7 @@ const LoginScreen = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const { data } = await axios.post('/api/users/login', { email, password });
+      const { data } = await axios.post('/api/users/access-tokens', { email, password });
       localStorage.setItem('userInfo', JSON.stringify(data));
       navigate('/todos');
     } catch (error) {
