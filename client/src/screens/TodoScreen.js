@@ -36,29 +36,39 @@ const TodoScreen = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    if (editing) {
-      const { data } = await axios.put(`/api/todos/${currentTodo._id}`, formData, {
-        headers: {
-          Authorization: `Bearer ${JSON.parse(localStorage.getItem('userInfo')).token}`,
-        },
-      });
-      setTodos(todos.map((todo) => (todo._id === currentTodo._id ? data : todo)));
-      setEditing(false);
-    } else {
-      const { data } = await axios.post('/api/todos', formData, {
-        headers: {
-          Authorization: `Bearer ${JSON.parse(localStorage.getItem('userInfo')).token}`,
-        },
-      });
-      setTodos([...todos, data]);
+  
+    if (!title || !dueDate) {
+      alert('Title and Due Date are required.');
+      return;
     }
-    setFormData({
-      title: '',
-      description: '',
-      type: 'Personal',
-      dueDate: '',
-    });
-  };
+  
+    try {
+      if (editing) {
+        const { data } = await axios.put(`/api/todos/${currentTodo._id}`, formData, {
+          headers: {
+            Authorization: `Bearer ${JSON.parse(localStorage.getItem('userInfo')).token}`,
+          },
+        });
+        setTodos(todos.map((todo) => (todo._id === currentTodo._id ? data : todo)));
+        setEditing(false);
+      } else {
+        const { data } = await axios.post('/api/todos', formData, {
+          headers: {
+            Authorization: `Bearer ${JSON.parse(localStorage.getItem('userInfo')).token}`,
+          },
+        });
+        setTodos([...todos, data]);
+      }
+      setFormData({
+        title: '',
+        description: '',
+        type: 'Personal',
+        dueDate: '',
+      });
+    } catch (error) {
+      console.error('Error creating/updating TODO', error);
+    }
+  };  
 
   const handleEdit = (todo) => {
     setEditing(true);
