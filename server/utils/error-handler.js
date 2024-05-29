@@ -1,24 +1,13 @@
-// server/utils/error-handler.js
-
-class AppError extends Error {
-    constructor(message, statusCode) {
-        super(message);
-        this.statusCode = statusCode;
-        this.status = `${statusCode}`.startsWith('4') ? 'fail' : 'error';
-        this.isOperational = true;
-
-        Error.captureStackTrace(this, this.constructor);
-    }
-}
-
 const handleErrors = (err, req, res, next) => {
-    err.statusCode = err.statusCode || 500;
-    err.status = err.status || 'error';
-
-    res.status(err.statusCode).json({
-        status: err.status,
-        message: err.message,
-    });
-};
-
-module.exports = { AppError, handleErrors };
+    if (err instanceof AppError) {
+      res.status(err.httpStatusCode).json(err.toJson());
+    } else {
+      res.status(500).json({
+        status: 'error',
+        message: 'Internal Server Error',
+      });
+    }
+  };
+  
+  module.exports = { handleErrors };
+  
