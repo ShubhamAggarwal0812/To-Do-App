@@ -36,12 +36,12 @@ const TodoScreen = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-  
+
     if (!title || !dueDate) {
       alert('Title and Due Date are required.');
       return;
     }
-  
+
     try {
       if (editing) {
         const { data } = await axios.put(`/api/todos/${currentTodo._id}`, formData, {
@@ -68,7 +68,7 @@ const TodoScreen = () => {
     } catch (error) {
       console.error('Error creating/updating TODO', error);
     }
-  };  
+  };
 
   const handleEdit = (todo) => {
     setEditing(true);
@@ -101,8 +101,9 @@ const TodoScreen = () => {
 
   const filterTodos = () => {
     let filtered = todos;
+    const currentDate = new Date();
     if (filter === 'Overdue') {
-      filtered = todos.filter(todo => new Date(todo.dueDate) < new Date());
+      filtered = todos.filter(todo => new Date(todo.dueDate) < currentDate && todo.status === 'To Do');
     } else if (filter === 'To Do' || filter === 'Done') {
       filtered = todos.filter(todo => todo.status === filter);
     }
@@ -110,7 +111,7 @@ const TodoScreen = () => {
   };
 
   return (
-    <div className="max-w-lg mx-auto mt-10">
+    <div className="max-w-lg mx-auto mt-10 p-4">
       <h1 className="text-2xl font-bold mb-5">TODOs</h1>
       <form onSubmit={handleSubmit} className="bg-white p-4 rounded-lg shadow-md">
         <div className="mb-4">
