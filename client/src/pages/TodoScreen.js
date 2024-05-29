@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
+import { useNavigate } from 'react-router-dom';
 
 const TodoScreen = () => {
   const [todos, setTodos] = useState([]);
@@ -15,6 +16,12 @@ const TodoScreen = () => {
   });
 
   const { title, description, type, dueDate } = formData;
+  const navigate = useNavigate();
+
+  const handleLogout = () => {
+    localStorage.removeItem('userInfo');
+    navigate('/login');
+  };
 
   useEffect(() => {
     const fetchTodos = async () => {
@@ -112,6 +119,12 @@ const TodoScreen = () => {
 
   return (
     <div className="max-w-lg mx-auto mt-10 p-4">
+      <button
+        onClick={handleLogout}
+        className="absolute top-4 right-4 bg-red-500 text-white py-2 px-4 rounded-md hover:bg-red-600"
+      >
+        Logout
+      </button>
       <h1 className="text-2xl font-bold mb-5">TODOs</h1>
       <form onSubmit={handleSubmit} className="bg-white p-4 rounded-lg shadow-md">
         <div className="mb-4">
