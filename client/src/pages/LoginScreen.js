@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 
@@ -8,12 +8,19 @@ const LoginScreen = () => {
   const [error, setError] = useState('');
   const navigate = useNavigate();
 
+  useEffect(() => {
+    const userInfo = localStorage.getItem('userInfo');
+    if (userInfo) {
+      navigate('/todos');
+    }
+  }, [navigate]);
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
       const { data } = await axios.post('/api/users/access-tokens', { email, password });
       localStorage.setItem('userInfo', JSON.stringify(data));
-      navigate('/todos');
+      navigate('/todos', { replace: true });
     } catch (error) {
       setError(error.response && error.response.data.message
         ? error.response.data.message

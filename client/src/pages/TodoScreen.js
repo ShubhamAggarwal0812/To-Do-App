@@ -20,7 +20,7 @@ const TodoScreen = () => {
 
   const handleLogout = () => {
     localStorage.removeItem('userInfo');
-    navigate('/login');
+    navigate('/login', { replace: true });
   };
 
   useEffect(() => {
