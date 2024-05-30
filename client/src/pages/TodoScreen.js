@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
+import moment from 'moment';
 
 const TodoScreen = () => {
   const [todos, setTodos] = useState([]);
@@ -17,11 +18,6 @@ const TodoScreen = () => {
 
   const { title, description, type, dueDate } = formData;
   const navigate = useNavigate();
-
-  const handleLogout = () => {
-    localStorage.removeItem('userInfo');
-    navigate('/login', { replace: true });
-  };
 
   useEffect(() => {
     const fetchTodos = async () => {
@@ -119,12 +115,6 @@ const TodoScreen = () => {
 
   return (
     <div className="max-w-lg mx-auto mt-10 p-4">
-      <button
-        onClick={handleLogout}
-        className="absolute top-4 right-4 bg-red-500 text-white py-2 px-4 rounded-md hover:bg-red-600"
-      >
-        Logout
-      </button>
       <h1 className="text-2xl font-bold mb-5">TODOs</h1>
       <form onSubmit={handleSubmit} className="bg-white p-4 rounded-lg shadow-md">
         <div className="mb-4">
@@ -188,31 +178,39 @@ const TodoScreen = () => {
         </select>
       </div>
 
-      <ul className="mt-5">
+      <ul className="mt-5 space-y-4">
         {filteredTodos.map((todo) => (
-          <li key={todo._id} className="bg-white p-4 rounded-lg shadow-md mb-3">
-            <h2 className="font-bold text-lg">{todo.title}</h2>
-            <p>{todo.description}</p>
-            <p className="text-sm text-gray-500">{todo.type} - {new Date(todo.dueDate).toLocaleDateString()}</p>
-            <p className="text-sm text-gray-500">{todo.status}</p>
-            <button
-              className="mr-2 text-blue-500 hover:underline"
-              onClick={() => handleEdit(todo)}
-            >
-              Edit
-            </button>
-            <button
-              className="mr-2 text-red-500 hover:underline"
-              onClick={() => handleDelete(todo._id)}
-            >
-              Delete
-            </button>
-            <button
-              className={`mr-2 ${todo.status === 'Done' ? 'text-yellow-500' : 'text-green-500'} hover:underline`}
-              onClick={() => handleMarkAsDone(todo._id, todo.status === 'Done' ? 'To Do' : 'Done')}
-            >
-              {todo.status === 'Done' ? 'Undo' : 'Mark as Done'}
-            </button>
+          <li key={todo._id} className="bg-white p-4 rounded-lg shadow-md flex items-center justify-between">
+            <div>
+              <h2 className="font-bold text-lg">{todo.title}</h2>
+              <p>{todo.description}</p>
+              <p className="text-sm text-gray-500">{todo.type} - {new Date(todo.dueDate).toLocaleDateString()}</p>
+              <p className="text-sm text-gray-500">{todo.status}</p>
+              <p className="text-sm text-gray-500">Added: {moment(todo.createdAt).format('MMMM Do YYYY, h:mm:ss a')}</p>
+              {todo.status === 'Done' && (
+                <p className="text-sm text-gray-500">Completed: {moment(todo.updatedAt).format('MMMM Do YYYY, h:mm:ss a')}</p>
+              )}
+            </div>
+            <div className="flex space-x-2">
+              <button
+                className="text-blue-500 hover:underline"
+                onClick={() => handleEdit(todo)}
+              >
+                <i className="fas fa-edit"></i>
+              </button>
+              <button
+                className="text-red-500 hover:underline"
+                onClick={() => handleDelete(todo._id)}
+              >
+                <i className="fas fa-trash-alt"></i>
+              </button>
+              <button
+                className={`${todo.status === 'Done' ? 'text-yellow-500' : 'text-green-500'} hover:underline`}
+                onClick={() => handleMarkAsDone(todo._id, todo.status === 'Done' ? 'To Do' : 'Done')}
+              >
+                {todo.status === 'Done' ? <i className="fas fa-undo"></i> : <i className="fas fa-check"></i>}
+              </button>
+            </div>
           </li>
         ))}
       </ul>

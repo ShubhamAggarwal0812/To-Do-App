@@ -6,6 +6,7 @@ const LoginScreen = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
+  const [showPassword, setShowPassword] = useState(false);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -42,14 +43,21 @@ const LoginScreen = () => {
             onChange={(e) => setEmail(e.target.value)}
           />
         </div>
-        <div className="mb-4">
+        <div className="mb-4 relative">
           <label className="block text-sm font-medium text-gray-700">Password</label>
           <input
-            type="password"
+            type={showPassword ? "text" : "password"}
             className="mt-1 block w-full p-2 border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
           />
+          <button
+            type="button"
+            className="absolute right-2 top-9 text-gray-600"
+            onClick={() => setShowPassword(!showPassword)}
+          >
+            <i className={showPassword ? 'fas fa-eye-slash' : 'fas fa-eye'}></i>
+          </button>
         </div>
         <button
           type="submit"

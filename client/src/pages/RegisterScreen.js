@@ -7,7 +7,9 @@ const RegisterScreen = () => {
   const [lastName, setLastName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [confirmPassword, setConfirmPassword] = useState('');
   const [error, setError] = useState('');
+  const [showPassword, setShowPassword] = useState(false);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -19,6 +21,12 @@ const RegisterScreen = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+
+    if (password !== confirmPassword) {
+      setError('Passwords do not match');
+      return;
+    }
+
     try {
       const { data } = await axios.post('/api/users/accounts', { firstName, lastName, email, password });
       localStorage.setItem('userInfo', JSON.stringify(data));
@@ -62,13 +70,29 @@ const RegisterScreen = () => {
             onChange={(e) => setEmail(e.target.value)}
           />
         </div>
-        <div className="mb-4">
+        <div className="mb-4 relative">
           <label className="block text-sm font-medium text-gray-700">Password</label>
           <input
-            type="password"
+            type={showPassword ? "text" : "password"}
             className="mt-1 block w-full p-2 border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
+          />
+          <button
+            type="button"
+            className="absolute right-2 top-9 text-gray-600"
+            onClick={() => setShowPassword(!showPassword)}
+          >
+            {showPassword ? 'Hide' : 'Show'}
+          </button>
+        </div>
+        <div className="mb-4">
+          <label className="block text-sm font-medium text-gray-700">Confirm Password</label>
+          <input
+            type={showPassword ? "text" : "password"}
+            className="mt-1 block w-full p-2 border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+            value={confirmPassword}
+            onChange={(e) => setConfirmPassword(e.target.value)}
           />
         </div>
         <button

@@ -4,10 +4,13 @@ import HomeScreen from './pages/HomeScreen';
 import LoginScreen from './pages/LoginScreen';
 import RegisterScreen from './pages/RegisterScreen';
 import TodoScreen from './pages/TodoScreen';
+import Header from './components/Header';
+import Footer from './components/Footer';
 
 function App() {
   return (
     <Router>
+      <Header />
       <div className="container mx-auto p-4">
         <Routes>
           <Route path="/" element={<HomeScreen />} exact />
@@ -16,6 +19,7 @@ function App() {
           <Route path="/todos" element={<TodoScreen />} />
         </Routes>
       </div>
+      <Footer />
     </Router>
   );
 }
