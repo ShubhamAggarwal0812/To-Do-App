@@ -1,8 +1,9 @@
-const User = require('../models/User');
+const User = require('../models/user');
 const jwt = require('jsonwebtoken');
 const ValidationError = require('../errors/validation-error');
 const UnauthorizedError = require('../errors/unauthorized-error');
 const NotFoundError = require('../errors/not-found-error');
+const { hashPassword, compareHash } = require('../utils/user-utils');
 
 const generateToken = (id) => {
   return jwt.sign({ id }, process.env.JWT_SECRET, {
@@ -20,11 +21,13 @@ const createUser = async (req, res, next) => {
       throw new ValidationError('User already exists');
     }
 
+    const hashedPassword = await hashPassword(password);
+
     const user = await User.create({
       firstName,
       lastName,
       email,
-      password,
+      password: hashedPassword,
     });
 
     if (user) {
@@ -49,7 +52,7 @@ const loginUser = async (req, res, next) => {
   try {
     const user = await User.findOne({ email });
 
-    if (user && (await user.matchPassword(password))) {
+    if (user && (await compareHash(password, user.password))) {
       res.json({
         _id: user._id,
         firstName: user.firstName,

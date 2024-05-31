@@ -83,7 +83,7 @@ const RegisterScreen = () => {
             className="absolute right-2 top-9 text-gray-600"
             onClick={() => setShowPassword(!showPassword)}
           >
-            {showPassword ? 'Hide' : 'Show'}
+            <i className={showPassword ? 'fas fa-eye-slash' : 'fas fa-eye'}></i>
           </button>
         </div>
         <div className="mb-4">
