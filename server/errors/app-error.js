@@ -1,23 +1,18 @@
 class AppError extends Error {
-    constructor(message, code, httpStatusCode) {
-      super(message);
-      this.code = code;
-      this.httpStatusCode = httpStatusCode;
-    }
-  
-    toString() {
-      return `${this.code}: ${this.message}`;
-    }
-  
-    toJson() {
-      const json = {};
-      json.message = this.message;
-      Object.entries(this).forEach(([key, value]) => {
-        json[key] = value;
-      });
-      return json;
-    }
+  constructor(message, statusCode, cause) {
+    super(message);
+    this.statusCode = statusCode;
+    this.cause = cause;
+    Error.captureStackTrace(this, this.constructor);
   }
-  
-  module.exports = AppError;
-  
+
+  toJson() {
+    return {
+      message: this.message,
+      statusCode: this.statusCode,
+      ...(this.cause && { cause: this.cause.toString() })
+    };
+  }
+}
+
+module.exports = AppError;

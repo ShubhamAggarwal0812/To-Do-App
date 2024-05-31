@@ -1,6 +1,8 @@
 const User = require('../models/User');
 const jwt = require('jsonwebtoken');
-const AppError = require('../errors/app-error');
+const ValidationError = require('../errors/validation-error');
+const UnauthorizedError = require('../errors/unauthorized-error');
+const NotFoundError = require('../errors/not-found-error');
 
 const generateToken = (id) => {
   return jwt.sign({ id }, process.env.JWT_SECRET, {
@@ -15,7 +17,7 @@ const createUser = async (req, res, next) => {
     const userExists = await User.findOne({ email });
 
     if (userExists) {
-      return next(new AppError('User already exists', 'USER_EXISTS_ERR_01', 400));
+      throw new ValidationError('User already exists');
     }
 
     const user = await User.create({
@@ -34,7 +36,7 @@ const createUser = async (req, res, next) => {
         token: generateToken(user._id),
       });
     } else {
-      return next(new AppError('Invalid user data', 'INVALID_USER_DATA_ERR_01', 400));
+      throw new ValidationError('Invalid user data');
     }
   } catch (error) {
     next(error);
@@ -56,7 +58,7 @@ const loginUser = async (req, res, next) => {
         token: generateToken(user._id),
       });
     } else {
-      return next(new AppError('Invalid email or password', 'INVALID_LOGIN_ERR_01', 401));
+      throw new UnauthorizedError('Invalid email or password');
     }
   } catch (error) {
     next(error);
@@ -75,7 +77,7 @@ const getUserProfile = async (req, res, next) => {
         email: user.email,
       });
     } else {
-      return next(new AppError('User not found', 'USER_NOT_FOUND_ERR_01', 404));
+      throw new NotFoundError('User not found');
     }
   } catch (error) {
     next(error);
