@@ -10,16 +10,18 @@ import Footer from './components/Footer';
 function App() {
   return (
     <Router>
-      <Header />
-      <div className="container mx-auto p-4">
-        <Routes>
-          <Route path="/" element={<HomeScreen />} exact />
-          <Route path="/login" element={<LoginScreen />} />
-          <Route path="/register" element={<RegisterScreen />} />
-          <Route path="/todos" element={<TodoScreen />} />
-        </Routes>
+      <div className="min-h-screen flex flex-col">
+        <Header />
+        <div className="flex-grow">
+          <Routes>
+            <Route path="/" element={<HomeScreen />} exact />
+            <Route path="/login" element={<LoginScreen />} />
+            <Route path="/register" element={<RegisterScreen />} />
+            <Route path="/todos" element={<TodoScreen />} />
+          </Routes>
+        </div>
+        <Footer />
       </div>
-      <Footer />
     </Router>
   );
 }

@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
+import { FaEye, FaEyeSlash } from 'react-icons/fa';
+import register from '../assets/register.png';
 
 const RegisterScreen = () => {
   const [firstName, setFirstName] = useState('');
@@ -39,8 +41,9 @@ const RegisterScreen = () => {
   };
 
   return (
-    <div className="max-w-md mx-auto mt-10">
-      <h1 className="text-2xl font-bold mb-5">Register</h1>
+    <div className="max-w-md mx-auto mt-10 p-4 bg-white shadow-lg rounded-lg mb-8">
+      <h1 className="text-2xl font-bold mb-5 text-center">Register</h1>
+      <img src={register} alt="Register" className="mx-auto mb-4 w-24 h-24" />
       {error && <div className="bg-red-100 text-red-700 p-2 mb-4 rounded">{error}</div>}
       <form onSubmit={handleSubmit}>
         <div className="mb-4">
@@ -83,10 +86,10 @@ const RegisterScreen = () => {
             className="absolute right-2 top-9 text-gray-600"
             onClick={() => setShowPassword(!showPassword)}
           >
-            <i className={showPassword ? 'fas fa-eye-slash' : 'fas fa-eye'}></i>
+            {showPassword ? <FaEyeSlash /> : <FaEye />}
           </button>
         </div>
-        <div className="mb-4">
+        <div className="mb-4 relative">
           <label className="block text-sm font-medium text-gray-700">Confirm Password</label>
           <input
             type={showPassword ? "text" : "password"}
@@ -94,6 +97,13 @@ const RegisterScreen = () => {
             value={confirmPassword}
             onChange={(e) => setConfirmPassword(e.target.value)}
           />
+          <button
+            type="button"
+            className="absolute right-2 top-9 text-gray-600"
+            onClick={() => setShowPassword(!showPassword)}
+          >
+            {showPassword ? <FaEyeSlash /> : <FaEye />}
+          </button>
         </div>
         <button
           type="submit"

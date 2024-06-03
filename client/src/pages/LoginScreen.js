@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
+import { FaEye, FaEyeSlash } from 'react-icons/fa';
+import login from '../assets/login.png';
 
 const LoginScreen = () => {
   const [email, setEmail] = useState('');
@@ -30,8 +32,9 @@ const LoginScreen = () => {
   };
 
   return (
-    <div className="max-w-md mx-auto mt-10">
-      <h1 className="text-2xl font-bold mb-5">Login</h1>
+    <div className="max-w-md mx-auto mt-10 p-4 bg-white shadow-lg rounded-lg">
+      <h1 className="text-2xl font-bold mb-5 text-center">Login</h1>
+      <img src={login} alt="Login" className="mx-auto mb-4 w-24 h-24" />
       {error && <div className="bg-red-100 text-red-700 p-2 mb-4 rounded">{error}</div>}
       <form onSubmit={handleSubmit}>
         <div className="mb-4">
@@ -56,7 +59,7 @@ const LoginScreen = () => {
             className="absolute right-2 top-9 text-gray-600"
             onClick={() => setShowPassword(!showPassword)}
           >
-            <i className={showPassword ? 'fas fa-eye-slash' : 'fas fa-eye'}></i>
+            {showPassword ? <FaEyeSlash /> : <FaEye />}
           </button>
         </div>
         <button

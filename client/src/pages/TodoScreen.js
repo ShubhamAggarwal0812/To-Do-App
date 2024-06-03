@@ -2,6 +2,11 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 import moment from 'moment';
+import { toast, ToastContainer } from 'react-toastify';
+import { useForm } from 'react-hook-form';
+import 'react-toastify/dist/ReactToastify.css';
+import { FaEdit, FaTrashAlt, FaCheck, FaUndo } from 'react-icons/fa';
+import { motion } from 'framer-motion';
 
 const TodoScreen = () => {
   const [todos, setTodos] = useState([]);
@@ -9,25 +14,23 @@ const TodoScreen = () => {
   const [filter, setFilter] = useState('All');
   const [editing, setEditing] = useState(false);
   const [currentTodo, setCurrentTodo] = useState(null);
-  const [formData, setFormData] = useState({
-    title: '',
-    description: '',
-    type: 'Personal',
-    dueDate: '',
-  });
 
-  const { title, description, type, dueDate } = formData;
+  const { register, handleSubmit, reset, formState: { errors } } = useForm();
   const navigate = useNavigate();
 
   useEffect(() => {
     const fetchTodos = async () => {
-      const { data } = await axios.get('/api/todos', {
-        headers: {
-          Authorization: `Bearer ${JSON.parse(localStorage.getItem('userInfo')).token}`,
-        },
-      });
-      setTodos(data);
-      setFilteredTodos(data);
+      try {
+        const { data } = await axios.get('/api/todos', {
+          headers: {
+            Authorization: `Bearer ${JSON.parse(localStorage.getItem('userInfo')).token}`,
+          },
+        });
+        setTodos(data);
+        setFilteredTodos(data);
+      } catch (error) {
+        toast.error('Error fetching TODOs');
+      }
     };
 
     fetchTodos();
@@ -37,11 +40,9 @@ const TodoScreen = () => {
     filterTodos();
   }, [filter, todos]);
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-
-    if (!title || !dueDate) {
-      alert('Title and Due Date are required.');
+  const onSubmit = async (formData) => {
+    if (!formData.title || !formData.dueDate) {
+      toast.error('Title and Due Date are required.');
       return;
     }
 
@@ -62,21 +63,17 @@ const TodoScreen = () => {
         });
         setTodos([...todos, data]);
       }
-      setFormData({
-        title: '',
-        description: '',
-        type: 'Personal',
-        dueDate: '',
-      });
+      reset();
+      toast.success(editing ? 'TODO updated successfully!' : 'TODO added successfully!');
     } catch (error) {
-      console.error('Error creating/updating TODO', error);
+      toast.error('Error creating/updating TODO');
     }
   };
 
   const handleEdit = (todo) => {
     setEditing(true);
     setCurrentTodo(todo);
-    setFormData({
+    reset({
       title: todo.title,
       description: todo.description,
       type: todo.type,
@@ -85,21 +82,33 @@ const TodoScreen = () => {
   };
 
   const handleDelete = async (id) => {
-    await axios.delete(`/api/todos/${id}`, {
-      headers: {
-        Authorization: `Bearer ${JSON.parse(localStorage.getItem('userInfo')).token}`,
-      },
-    });
-    setTodos(todos.filter((todo) => todo._id !== id));
+    if (window.confirm('Are you sure you want to delete this TODO?')) {
+      try {
+        await axios.delete(`/api/todos/${id}`, {
+          headers: {
+            Authorization: `Bearer ${JSON.parse(localStorage.getItem('userInfo')).token}`,
+          },
+        });
+        setTodos(todos.filter((todo) => todo._id !== id));
+        toast.success('TODO deleted successfully!');
+      } catch (error) {
+        toast.error('Error deleting TODO');
+      }
+    }
   };
 
   const handleMarkAsDone = async (id, status) => {
-    const { data } = await axios.put(`/api/todos/${id}`, { status }, {
-      headers: {
-        Authorization: `Bearer ${JSON.parse(localStorage.getItem('userInfo')).token}`,
-      },
-    });
-    setTodos(todos.map((todo) => (todo._id === id ? data : todo)));
+    try {
+      const { data } = await axios.put(`/api/todos/${id}`, { status }, {
+        headers: {
+          Authorization: `Bearer ${JSON.parse(localStorage.getItem('userInfo')).token}`,
+        },
+      });
+      setTodos(todos.map((todo) => (todo._id === id ? data : todo)));
+      toast.success(`TODO marked as ${status === 'Done' ? 'Done' : 'To Do'}!`);
+    } catch (error) {
+      toast.error('Error updating TODO status');
+    }
   };
 
   const filterTodos = () => {
@@ -115,32 +124,31 @@ const TodoScreen = () => {
 
   return (
     <div className="max-w-lg mx-auto mt-10 p-4">
+      <ToastContainer />
       <h1 className="text-2xl font-bold mb-5">TODOs</h1>
-      <form onSubmit={handleSubmit} className="bg-white p-4 rounded-lg shadow-md">
+      <form onSubmit={handleSubmit(onSubmit)} className="bg-white p-4 rounded-lg shadow-md">
         <div className="mb-4">
           <label className="block text-sm font-medium text-gray-700">Title</label>
           <input
             type="text"
             className="mt-1 block w-full p-2 border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
-            value={title}
-            onChange={(e) => setFormData({ ...formData, title: e.target.value })}
+            {...register('title', { required: 'Title is required' })}
           />
+          {errors.title && <p className="text-red-500 text-sm">{errors.title.message}</p>}
         </div>
         <div className="mb-4">
           <label className="block text-sm font-medium text-gray-700">Description</label>
           <input
             type="text"
             className="mt-1 block w-full p-2 border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
-            value={description}
-            onChange={(e) => setFormData({ ...formData, description: e.target.value })}
+            {...register('description')}
           />
         </div>
         <div className="mb-4">
           <label className="block text-sm font-medium text-gray-700">Type</label>
           <select
             className="mt-1 block w-full p-2 border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
-            value={type}
-            onChange={(e) => setFormData({ ...formData, type: e.target.value })}
+            {...register('type')}
           >
             <option value="Personal">Personal</option>
             <option value="Official">Official</option>
@@ -152,9 +160,9 @@ const TodoScreen = () => {
           <input
             type="date"
             className="mt-1 block w-full p-2 border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
-            value={dueDate}
-            onChange={(e) => setFormData({ ...formData, dueDate: e.target.value })}
+            {...register('dueDate', { required: 'Due Date is required' })}
           />
+          {errors.dueDate && <p className="text-red-500 text-sm">{errors.dueDate.message}</p>}
         </div>
         <button
           type="submit"
@@ -180,7 +188,13 @@ const TodoScreen = () => {
 
       <ul className="mt-5 space-y-4">
         {filteredTodos.map((todo) => (
-          <li key={todo._id} className="bg-white p-4 rounded-lg shadow-md flex items-center justify-between">
+          <motion.li
+            key={todo._id}
+            className="bg-white p-4 rounded-lg shadow-md flex items-center justify-between"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ duration: 0.5 }}
+          >
             <div>
               <h2 className="font-bold text-lg">{todo.title}</h2>
               <p>{todo.description}</p>
@@ -196,22 +210,22 @@ const TodoScreen = () => {
                 className="text-blue-500 hover:underline"
                 onClick={() => handleEdit(todo)}
               >
-                <i className="fas fa-edit"></i>
+                <FaEdit />
               </button>
               <button
                 className="text-red-500 hover:underline"
                 onClick={() => handleDelete(todo._id)}
               >
-                <i className="fas fa-trash-alt"></i>
+                <FaTrashAlt />
               </button>
               <button
                 className={`${todo.status === 'Done' ? 'text-yellow-500' : 'text-green-500'} hover:underline`}
                 onClick={() => handleMarkAsDone(todo._id, todo.status === 'Done' ? 'To Do' : 'Done')}
               >
-                {todo.status === 'Done' ? <i className="fas fa-undo"></i> : <i className="fas fa-check"></i>}
+                {todo.status === 'Done' ? <FaUndo /> : <FaCheck />}
               </button>
             </div>
-          </li>
+          </motion.li>
         ))}
       </ul>
     </div>
