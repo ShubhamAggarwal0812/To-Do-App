@@ -1,43 +1,58 @@
-// server/controllers/todoController.js
+const Todo = require('../models/todo-db');
+const { TodoNotFoundError } = require('../errors/todo-errors');
 
-const Todo = require('../models/Todo');
-
-const getTodos = async (req, res) => {
-    const todos = await Todo.find({ user: req.user.id });
-    res.json(todos);
-};
-
-const getTodoById = async (req, res) => {
-    const todo = await Todo.findById(req.params.id);
-
-    if (todo && todo.user.toString() === req.user.id) {
-        res.json(todo);
-    } else {
-        res.status(404).json({ message: 'Todo not found' });
+const getTodos = async (req, res, next) => {
+    try {
+        const todos = await Todo.find({ user: req.user.id });
+        res.json(todos);
+    } catch (error) {
+        next(error);
     }
 };
 
-const createTodo = async (req, res) => {
-    const { title, description, type, dueDate } = req.body;
+const getTodoById = async (req, res, next) => {
+    try {
+        const todo = await Todo.findById(req.params.id);
 
-    const todo = new Todo({
-        user: req.user.id,
-        title,
-        description,
-        type,
-        dueDate,
-    });
+        if (!todo || todo.user.toString() !== req.user.id) {
+            throw new TodoNotFoundError();
+        }
 
-    const createdTodo = await todo.save();
-    res.status(201).json(createdTodo);
+        res.json(todo);
+    } catch (error) {
+        next(error);
+    }
 };
 
-const updateTodo = async (req, res) => {
-    const { title, description, type, dueDate, status } = req.body;
+const createTodo = async (req, res, next) => {
+    try {
+        const { title, description, type, dueDate } = req.body;
 
-    const todo = await Todo.findById(req.params.id);
+        const todo = new Todo({
+            user: req.user.id,
+            title,
+            description,
+            type,
+            dueDate,
+        });
 
-    if (todo && todo.user.toString() === req.user.id) {
+        const createdTodo = await todo.save();
+        res.status(201).json(createdTodo);
+    } catch (error) {
+        next(error);
+    }
+};
+
+const updateTodo = async (req, res, next) => {
+    try {
+        const { title, description, type, dueDate, status } = req.body;
+
+        const todo = await Todo.findById(req.params.id);
+
+        if (!todo || todo.user.toString() !== req.user.id) {
+            throw new TodoNotFoundError();
+        }
+
         todo.title = title || todo.title;
         todo.description = description || todo.description;
         todo.type = type || todo.type;
@@ -46,19 +61,24 @@ const updateTodo = async (req, res) => {
 
         const updatedTodo = await todo.save();
         res.json(updatedTodo);
-    } else {
-        res.status(404).json({ message: 'Todo not found' });
+    } catch (error) {
+        next(error);
     }
 };
 
-const deleteTodo = async (req, res) => {
-    const todo = await Todo.findById(req.params.id);
+const deleteTodo = async (req, res, next) => {
+    try {
+        const todo = await Todo.findById(req.params.id);
 
-    if (todo && todo.user.toString() === req.user.id) {
-        await todo.remove();
-        res.json({ message: 'Todo removed' });
-    } else {
-        res.status(404).json({ message: 'Todo not found' });
+        if (!todo || todo.user.toString() !== req.user.id) {
+            throw new TodoNotFoundError();
+        }
+
+        todo.active = false;
+        const updatedTodo = await todo.save();
+        res.json({ message: 'Todo removed', todo: updatedTodo });
+    } catch (error) {
+        next(error);
     }
 };
 

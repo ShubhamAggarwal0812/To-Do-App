@@ -6,17 +6,15 @@ const {
     deleteTodo,
     getTodoById,
 } = require('../controllers/todo-controller');
-const { ensureAccess } = require('../middleware/auth-middleware');
+const { ensureAccess } = require('../middleware/account-auth-middleware');
 
 const router = express.Router();
 
-router.route('/')
-    .get(ensureAccess, getTodos)
-    .post(ensureAccess, createTodo);
+router.route('/').get(ensureAccess, getTodos);
+router.route('/').post(ensureAccess, createTodo);
 
-router.route('/:id')
-    .get(ensureAccess, getTodoById)
-    .put(ensureAccess, updateTodo)
-    .delete(ensureAccess, deleteTodo);
+router.route('/:id').get(ensureAccess, getTodoById);
+router.route('/:id').put(ensureAccess, updateTodo);
+router.route('/:id').delete(ensureAccess, deleteTodo);
 
 module.exports = router;
