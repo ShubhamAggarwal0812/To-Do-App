@@ -2,6 +2,7 @@ const express = require('express');
 const dotenv = require('dotenv');
 const connectDB = require('./config/db');
 const userRoutes = require('./routes/user-routes');
+const todoRoutes = require('./routes/todo-routes');
 const { handleErrors } = require('./utils/error-handler');
 
 dotenv.config();
@@ -13,6 +14,7 @@ const app = express();
 app.use(express.json());
 
 app.use('/api/users', userRoutes);
+app.use('/api/todos', todoRoutes);
 
 app.use(handleErrors);
 
