@@ -3,7 +3,7 @@ const { TodoNotFoundError } = require('../errors/todo-errors');
 
 const getTodos = async (req, res, next) => {
     try {
-        const todos = await Todo.find({ user: req.user.id });
+        const todos = await Todo.find({ user: req.user.id, active: true });
         res.json(todos);
     } catch (error) {
         next(error);
@@ -34,6 +34,7 @@ const createTodo = async (req, res, next) => {
             description,
             type,
             dueDate,
+            active: true,
         });
 
         const createdTodo = await todo.save();
