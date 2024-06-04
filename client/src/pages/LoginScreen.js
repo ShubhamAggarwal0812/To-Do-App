@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import { FaEye, FaEyeSlash } from 'react-icons/fa';
-import login from '../assets/login.png';
+import logo from '../assets/logo.png';
 
 const LoginScreen = () => {
   const [email, setEmail] = useState('');
@@ -34,7 +34,7 @@ const LoginScreen = () => {
   return (
     <div className="max-w-md mx-auto mt-10 p-4 bg-white shadow-lg rounded-lg">
       <h1 className="text-2xl font-bold mb-5 text-center">Login</h1>
-      <img src={login} alt="Login" className="mx-auto mb-4 w-24 h-24" />
+      <img src={logo} alt="Login" className="mx-auto mb-4 w-24 h-24" />
       {error && <div className="bg-red-100 text-red-700 p-2 mb-4 rounded">{error}</div>}
       <form onSubmit={handleSubmit}>
         <div className="mb-4">
@@ -56,7 +56,7 @@ const LoginScreen = () => {
           />
           <button
             type="button"
-            className="absolute right-2 top-9 text-gray-600"
+            className="absolute right-3 top-9 text-gray-600"
             onClick={() => setShowPassword(!showPassword)}
           >
             {showPassword ? <FaEyeSlash /> : <FaEye />}
@@ -69,6 +69,9 @@ const LoginScreen = () => {
           Login
         </button>
       </form>
+      <div className="text-center mt-4">
+        <p className="text-sm text-gray-600">Not registered yet? <a href="/register" className="text-blue-500 hover:underline">Register here</a></p>
+      </div>
     </div>
   );
 };

@@ -1,7 +1,19 @@
-@import 'tailwindcss/tailwind.css';
-@import '@fortawesome/fontawesome-free/css/all.min.css';
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
 
-/* Custom styles */
 body {
-  font-family: 'Arial', sans-serif;
+  font-family: 'Inter', sans-serif;
+}
+
+.modal-overlay {
+  @apply fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center;
+}
+
+.modal-content {
+  @apply bg-white rounded-lg shadow-lg p-6 max-w-xl w-full mx-auto relative;
+}
+
+.close-button {
+  @apply absolute top-3 right-3 text-xl text-gray-500 hover:text-gray-700 focus:outline-none;
 }

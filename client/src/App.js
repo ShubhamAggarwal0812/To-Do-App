@@ -4,6 +4,8 @@ import HomeScreen from './pages/HomeScreen';
 import LoginScreen from './pages/LoginScreen';
 import RegisterScreen from './pages/RegisterScreen';
 import TodoScreen from './pages/TodoScreen';
+import AboutScreen from './pages/AboutScreen';
+import HelpScreen from './pages/HelpScreen';
 import Header from './components/Header';
 import Footer from './components/Footer';
 
@@ -18,6 +20,8 @@ function App() {
             <Route path="/login" element={<LoginScreen />} />
             <Route path="/register" element={<RegisterScreen />} />
             <Route path="/todos" element={<TodoScreen />} />
+            <Route path="/about" element={<AboutScreen />} />
+            <Route path="/help" element={<HelpScreen />} />
           </Routes>
         </div>
         <Footer />

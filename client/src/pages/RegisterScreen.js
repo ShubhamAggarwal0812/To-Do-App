@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
-import { FaEye, FaEyeSlash } from 'react-icons/fa';
 import register from '../assets/register.png';
 
 const RegisterScreen = () => {
@@ -11,7 +10,6 @@ const RegisterScreen = () => {
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
   const [error, setError] = useState('');
-  const [showPassword, setShowPassword] = useState(false);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -76,34 +74,20 @@ const RegisterScreen = () => {
         <div className="mb-4 relative">
           <label className="block text-sm font-medium text-gray-700">Password</label>
           <input
-            type={showPassword ? "text" : "password"}
+            type="password"
             className="mt-1 block w-full p-2 border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
           />
-          <button
-            type="button"
-            className="absolute right-2 top-9 text-gray-600"
-            onClick={() => setShowPassword(!showPassword)}
-          >
-            {showPassword ? <FaEyeSlash /> : <FaEye />}
-          </button>
         </div>
         <div className="mb-4 relative">
           <label className="block text-sm font-medium text-gray-700">Confirm Password</label>
           <input
-            type={showPassword ? "text" : "password"}
+            type="text"
             className="mt-1 block w-full p-2 border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
             value={confirmPassword}
             onChange={(e) => setConfirmPassword(e.target.value)}
           />
-          <button
-            type="button"
-            className="absolute right-2 top-9 text-gray-600"
-            onClick={() => setShowPassword(!showPassword)}
-          >
-            {showPassword ? <FaEyeSlash /> : <FaEye />}
-          </button>
         </div>
         <button
           type="submit"
@@ -112,6 +96,9 @@ const RegisterScreen = () => {
           Register
         </button>
       </form>
+      <div className="text-center mt-4">
+        <p className="text-sm text-gray-600">Already registered? <a href="/login" className="text-blue-500 hover:underline">Login here</a></p>
+      </div>
     </div>
   );
 };
