@@ -1,15 +1,9 @@
 // server/controllers/user-controller.js
 
 const User = require('../models/user-db');
-const jwt = require('jsonwebtoken');
 const { hashPassword, compareHash } = require('../utils/account-util');
-const { UserNotFoundError, UserValidationError, UnauthorizedError } = require('../errors/user-errors');
-
-const generateToken = (id) => {
-    return jwt.sign({ id }, process.env.JWT_SECRET, {
-        expiresIn: '30d',
-    });
-};
+const { generateToken } = require('../utils/token-util');
+const { UserValidationError, UnauthorizedError } = require('../errors/user-errors');
 
 const createUser = async (req, res, next) => {
     try {
@@ -70,27 +64,7 @@ const loginUser = async (req, res, next) => {
     }
 };
 
-const getUserProfile = async (req, res, next) => {
-    try {
-        const user = await User.findById(req.user.id);
-
-        if (!user) {
-            throw new UserNotFoundError();
-        }
-
-        res.json({
-            _id: user._id,
-            firstName: user.firstName,
-            lastName: user.lastName,
-            email: user.email,
-        });
-    } catch (error) {
-        next(error);
-    }
-};
-
 module.exports = {
     createUser,
     loginUser,
-    getUserProfile,
 };

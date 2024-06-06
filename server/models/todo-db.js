@@ -20,11 +20,13 @@ const todoSchema = mongoose.Schema(
         type: {
             type: String,
             required: true,
+            enum: ['Personal', 'Official', 'Hobby'],
             default: 'Personal',
         },
         status: {
             type: String,
             required: true,
+            enum: ['To Do', 'Done'],
             default: 'To Do',
         },
         dueDate: {
