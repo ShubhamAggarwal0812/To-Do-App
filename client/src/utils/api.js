@@ -1,12 +1,15 @@
 // client/src/utils/api.js
+
 import axios from 'axios';
 import { toast } from 'react-toastify';
+import getToken from './getToken';
 
 export const fetchTodos = async () => {
   try {
+    const token = getToken();
     const { data } = await axios.get('/api/todos', {
       headers: {
-        Authorization: `Bearer ${JSON.parse(localStorage.getItem('userInfo')).token}`,
+        Authorization: `Bearer ${token}`,
       },
     });
     return data.filter(todo => todo.active);
@@ -16,8 +19,9 @@ export const fetchTodos = async () => {
   }
 };
 
-export const createTodo = async (formData, token) => {
+export const createTodo = async (formData) => {
   try {
+    const token = getToken();
     const { data } = await axios.post('/api/todos', { ...formData, active: true }, {
       headers: {
         Authorization: `Bearer ${token}`,
@@ -31,8 +35,9 @@ export const createTodo = async (formData, token) => {
   }
 };
 
-export const updateTodo = async (id, formData, token) => {
+export const updateTodo = async (id, formData) => {
   try {
+    const token = getToken();
     const { data } = await axios.put(`/api/todos/${id}`, formData, {
       headers: {
         Authorization: `Bearer ${token}`,
@@ -46,8 +51,9 @@ export const updateTodo = async (id, formData, token) => {
   }
 };
 
-export const deleteTodo = async (id, token) => {
+export const deleteTodo = async (id) => {
   try {
+    const token = getToken();
     await axios.delete(`/api/todos/${id}`, {
       headers: {
         Authorization: `Bearer ${token}`,
@@ -61,8 +67,9 @@ export const deleteTodo = async (id, token) => {
   }
 };
 
-export const markTodoAsDone = async (id, status, token) => {
+export const markTodoAsDone = async (id, status) => {
   try {
+    const token = getToken();
     const { data } = await axios.put(`/api/todos/${id}`, { status }, {
       headers: {
         Authorization: `Bearer ${token}`,

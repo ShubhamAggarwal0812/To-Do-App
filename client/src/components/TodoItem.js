@@ -1,3 +1,5 @@
+// client/src/components/TodoItem.js
+
 import React from 'react';
 import { FaEdit, FaTrashAlt, FaCheck, FaUndo } from 'react-icons/fa';
 import { motion } from 'framer-motion';

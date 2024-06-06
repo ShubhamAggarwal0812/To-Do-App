@@ -1,3 +1,5 @@
+// client/src/pages/HomeScreen.js
+
 import React from 'react';
 import { Link } from 'react-router-dom';
 import placeholderLogo from '../assets/logo.png';

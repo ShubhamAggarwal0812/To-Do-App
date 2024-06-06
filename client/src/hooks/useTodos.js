@@ -1,8 +1,10 @@
 // client/src/hooks/useTodos.js
+
 import { useState, useEffect } from 'react';
 import { toast } from 'react-toastify';
 import filterTodos from '../utils/filterTodos';
 import { fetchTodos, createTodo, updateTodo, deleteTodo, markTodoAsDone } from '../utils/api';
+import getToken from '../utils/getToken';
 
 const useTodos = () => {
   const [todos, setTodos] = useState([]);
@@ -32,7 +34,7 @@ const useTodos = () => {
       return;
     }
 
-    const token = JSON.parse(localStorage.getItem('userInfo')).token;
+    const token = getToken();
     let updatedTodos;
 
     if (editing) {
@@ -65,7 +67,7 @@ const useTodos = () => {
 
   const handleDelete = async (id) => {
     if (window.confirm('Are you sure you want to delete this TODO?')) {
-      const token = JSON.parse(localStorage.getItem('userInfo')).token;
+      const token = getToken();
       if (await deleteTodo(id, token)) {
         const updatedTodos = todos.filter((todo) => todo._id !== id);
         setTodos(updatedTodos);
@@ -75,7 +77,7 @@ const useTodos = () => {
   };
 
   const handleMarkAsDone = async (id, status) => {
-    const token = JSON.parse(localStorage.getItem('userInfo')).token;
+    const token = getToken();
     const updatedTodo = await markTodoAsDone(id, status, token);
     if (updatedTodo) {
       const updatedTodos = todos.map((todo) => (todo._id === id ? updatedTodo : todo))
