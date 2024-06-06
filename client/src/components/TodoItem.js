@@ -5,7 +5,7 @@ import { FaEdit, FaTrashAlt, FaCheck, FaUndo } from 'react-icons/fa';
 import { motion } from 'framer-motion';
 import moment from 'moment';
 
-const TodoItem = ({ todo, handleEdit, handleDelete, handleMarkAsDone }) => {
+const TodoItem = ({ todo, handleEdit, handleDelete, handleToggleStatus }) => {
   return (
     <motion.li
       className="todo-item bg-white p-4 rounded-lg shadow-md flex justify-between items-center"
@@ -38,7 +38,7 @@ const TodoItem = ({ todo, handleEdit, handleDelete, handleMarkAsDone }) => {
         </button>
         <button
           className={`${todo.status === 'Done' ? 'text-yellow-500' : 'text-green-500'} hover:underline`}
-          onClick={() => handleMarkAsDone(todo._id, todo.status === 'Done' ? 'To Do' : 'Done')}
+          onClick={() => handleToggleStatus(todo._id)}
         >
           {todo.status === 'Done' ? <FaUndo /> : <FaCheck />}
         </button>

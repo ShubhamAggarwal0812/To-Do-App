@@ -21,7 +21,7 @@ const TodoScreen = () => {
     onSubmit,
     handleEdit,
     handleDelete,
-    handleMarkAsDone,
+    handleToggleStatus,
     handleFilterChange,
     getPersonalizedMessage
   } = useTodos();
@@ -51,7 +51,7 @@ const TodoScreen = () => {
         filteredTodos={filteredTodos}
         handleEdit={handleEdit}
         handleDelete={handleDelete}
-        handleMarkAsDone={handleMarkAsDone}
+        handleToggleStatus={handleToggleStatus}
         getPersonalizedMessage={getPersonalizedMessage}
       />
     </div>

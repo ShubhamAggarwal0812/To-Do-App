@@ -3,7 +3,7 @@
 import { useState, useEffect } from 'react';
 import { toast } from 'react-toastify';
 import filterTodos from '../utils/filterTodos';
-import { fetchTodos, createTodo, updateTodo, deleteTodo, markTodoAsDone } from '../utils/api';
+import { fetchTodos, createTodo, updateTodo, deleteTodo, toggleTodoStatus } from '../utils/api';
 import getToken from '../utils/getToken';
 
 const useTodos = () => {
@@ -76,9 +76,8 @@ const useTodos = () => {
     }
   };
 
-  const handleMarkAsDone = async (id, status) => {
-    const token = getToken();
-    const updatedTodo = await markTodoAsDone(id, status, token);
+  const handleToggleStatus = async (id) => {
+    const updatedTodo = await toggleTodoStatus(id);
     if (updatedTodo) {
       const updatedTodos = todos.map((todo) => (todo._id === id ? updatedTodo : todo))
         .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
@@ -105,7 +104,7 @@ const useTodos = () => {
     onSubmit,
     handleEdit,
     handleDelete,
-    handleMarkAsDone,
+    handleToggleStatus,
     handleFilterChange: (event) => setFilter(event.target.value),
     getPersonalizedMessage: () => {
       if (filteredTodos.length === 0) {
