@@ -74,6 +74,24 @@ const updateTodo = async (req, res, next) => {
     }
 };
 
+const toggleTodoStatus = async (req, res, next) => {
+    try {
+        const todo = await Todo.findById(req.params.id);
+
+        if (!todo || todo.user.toString() !== req.user.id) {
+            throw new TodoNotFoundError();
+        }
+
+        // Toggle status between 'To Do' and 'Done'
+        todo.status = todo.status === 'To Do' ? 'Done' : 'To Do';
+
+        const updatedTodo = await todo.save();
+        res.json(updatedTodo);
+    } catch (error) {
+        next(error);
+    }
+};
+
 const deleteTodo = async (req, res, next) => {
     try {
         const todo = await Todo.findById(req.params.id);
@@ -97,4 +115,5 @@ module.exports = {
     updateTodo,
     deleteTodo,
     getTodoById,
+    toggleTodoStatus,
 };

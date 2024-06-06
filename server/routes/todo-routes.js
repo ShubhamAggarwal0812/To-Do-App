@@ -7,6 +7,7 @@ const {
     updateTodo,
     deleteTodo,
     getTodoById,
+    toggleTodoStatus,
 } = require('../controllers/todo-controller');
 const { ensureAccess } = require('../middleware/account-auth-middleware');
 
@@ -26,5 +27,8 @@ router.route('/:id').put(ensureAccess, updateTodo);
 
 // Route to delete a todo by ID
 router.route('/:id').delete(ensureAccess, deleteTodo);
+
+// Route to toggle the status of a todo by ID
+router.route('/:id/status').patch(ensureAccess, toggleTodoStatus);
 
 module.exports = router;
