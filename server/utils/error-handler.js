@@ -1,3 +1,5 @@
+// server\utils\error-handler.js
+
 const AppError = require('../errors/app-error');
 
 const handleErrors = (err, req, res, next) => {

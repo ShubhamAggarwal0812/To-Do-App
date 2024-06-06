@@ -1,3 +1,5 @@
+// server\server.js
+
 const express = require('express');
 const dotenv = require('dotenv');
 const connectDB = require('./config/db');
@@ -13,9 +15,13 @@ const app = express();
 
 app.use(express.json());
 
+// User routes
 app.use('/api/users', userRoutes);
+
+// Todo routes
 app.use('/api/todos', todoRoutes);
 
+// Error handling middleware
 app.use(handleErrors);
 
 const PORT = process.env.PORT || 5000;

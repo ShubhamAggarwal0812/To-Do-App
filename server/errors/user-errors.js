@@ -1,3 +1,5 @@
+// server\errors\user-errors.js
+
 const AppError = require('./app-error');
 
 class UserNotFoundError extends AppError {

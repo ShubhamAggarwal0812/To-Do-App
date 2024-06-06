@@ -1,3 +1,5 @@
+// server\utils\account-util.js
+
 const bcrypt = require('bcryptjs');
 
 const hashPassword = async (password) => {

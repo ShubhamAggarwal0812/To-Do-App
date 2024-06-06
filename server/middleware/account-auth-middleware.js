@@ -1,3 +1,5 @@
+// server\middleware\account-auth-middleware.js
+
 const jwt = require('jsonwebtoken');
 const User = require('../models/user-db');
 const AccessTokenExpiredError = require('../errors/access-token-error');

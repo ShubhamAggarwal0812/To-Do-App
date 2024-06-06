@@ -1,8 +1,11 @@
+// server\controllers\todo-controller.js
+
 const Todo = require('../models/todo-db');
 const { TodoNotFoundError } = require('../errors/todo-errors');
 
 const getTodos = async (req, res, next) => {
     try {
+        // Fetch active todos for the authenticated user
         const todos = await Todo.find({ user: req.user.id, active: true });
         res.json(todos);
     } catch (error) {
@@ -12,6 +15,7 @@ const getTodos = async (req, res, next) => {
 
 const getTodoById = async (req, res, next) => {
     try {
+        // Fetch a single todo by ID
         const todo = await Todo.findById(req.params.id);
 
         if (!todo || todo.user.toString() !== req.user.id) {
@@ -28,6 +32,7 @@ const createTodo = async (req, res, next) => {
     try {
         const { title, description, type, dueDate } = req.body;
 
+        // Create a new todo for the authenticated user
         const todo = new Todo({
             user: req.user.id,
             title,
@@ -48,12 +53,14 @@ const updateTodo = async (req, res, next) => {
     try {
         const { title, description, type, dueDate, status } = req.body;
 
+        // Find and update a todo
         const todo = await Todo.findById(req.params.id);
 
         if (!todo || todo.user.toString() !== req.user.id) {
             throw new TodoNotFoundError();
         }
 
+        // Update only the fields that are provided
         todo.title = title || todo.title;
         todo.description = description || todo.description;
         todo.type = type || todo.type;
@@ -75,6 +82,7 @@ const deleteTodo = async (req, res, next) => {
             throw new TodoNotFoundError();
         }
 
+        // Soft delete the todo by setting active to false
         todo.active = false;
         const updatedTodo = await todo.save();
         res.json({ message: 'Todo removed', todo: updatedTodo });
