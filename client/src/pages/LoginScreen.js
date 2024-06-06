@@ -1,15 +1,15 @@
 // client/src/pages/LoginScreen.js
 
-import React, { useState, useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
+import { useForm } from 'react-hook-form';
 import { FaEye, FaEyeSlash } from 'react-icons/fa';
+import { toast } from 'react-toastify';
 import logo from '../assets/logo.png';
 
 const LoginScreen = () => {
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
-  const [error, setError] = useState('');
+  const { register, handleSubmit, formState: { errors } } = useForm();
   const [showPassword, setShowPassword] = useState(false);
   const navigate = useNavigate();
 
@@ -20,14 +20,13 @@ const LoginScreen = () => {
     }
   }, [navigate]);
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
+  const onSubmit = async (data) => {
     try {
-      const { data } = await axios.post('/api/users/access-tokens', { email, password });
-      localStorage.setItem('userInfo', JSON.stringify(data));
+      const { data: responseData } = await axios.post('/api/users/access-tokens', data);
+      localStorage.setItem('userInfo', JSON.stringify(responseData));
       navigate('/todos', { replace: true });
     } catch (error) {
-      setError(error.response && error.response.data.message
+      toast.error(error.response && error.response.data.message
         ? error.response.data.message
         : error.message);
     }
@@ -37,25 +36,30 @@ const LoginScreen = () => {
     <div className="max-w-md mx-auto mt-10 p-4 bg-white shadow-lg rounded-lg">
       <h1 className="text-2xl font-bold mb-5 text-center">Login</h1>
       <img src={logo} alt="Login" className="mx-auto mb-4 w-24 h-24" />
-      {error && <div className="bg-red-100 text-red-700 p-2 mb-4 rounded">{error}</div>}
-      <form onSubmit={handleSubmit}>
+      <form onSubmit={handleSubmit(onSubmit)}>
         <div className="mb-4">
           <label className="block text-sm font-medium text-gray-700">Email</label>
           <input
             type="email"
             className="mt-1 block w-full p-2 border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
+            {...register('email', {
+              required: 'Email is required',
+              pattern: {
+                value: /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}$/,
+                message: 'Invalid email address'
+              }
+            })}
           />
+          {errors.email && <p className="text-red-500 text-sm">{errors.email.message}</p>}
         </div>
         <div className="mb-4 relative">
           <label className="block text-sm font-medium text-gray-700">Password</label>
           <input
-            type={showPassword ? "text" : "password"}
+            type={showPassword ? 'text' : 'password'}
             className="mt-1 block w-full p-2 border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
+            {...register('password', { required: 'Password is required' })}
           />
+          {errors.password && <p className="text-red-500 text-sm">{errors.password.message}</p>}
           <button
             type="button"
             className="absolute right-3 top-9 text-gray-600"

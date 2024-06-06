@@ -1,4 +1,4 @@
-// server\utils\error-handler.js
+// server/utils/error-handler.js
 
 const AppError = require('../errors/app-error');
 
