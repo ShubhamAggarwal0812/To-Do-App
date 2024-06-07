@@ -5,7 +5,7 @@ const { hashPassword, compareHash } = require('../utils/account-util');
 const { generateToken } = require('../utils/token-util');
 const { UserValidationError, UnauthorizedError } = require('../errors/user-errors');
 
-const createUser = async (req, res, next) => {
+const createUser = async (req, res) => {
     try {
         const { firstName, lastName, email, password } = req.body;
 
@@ -33,16 +33,15 @@ const createUser = async (req, res, next) => {
         });
     } catch (error) {
         if (error.name === 'ValidationError') {
-            // Handle Mongoose validation errors
             const messages = Object.values(error.errors).map(val => val.message);
-            next(new UserValidationError(messages.join(', ')));
+            throw new UserValidationError(messages.join(', '));
         } else {
-            next(error);
+            throw error;
         }
     }
 };
 
-const loginUser = async (req, res, next) => {
+const loginUser = async (req, res) => {
     try {
         const { email, password } = req.body;
 
@@ -60,7 +59,7 @@ const loginUser = async (req, res, next) => {
             token: generateToken(user._id),
         });
     } catch (error) {
-        next(error);
+        throw error;
     }
 };
 

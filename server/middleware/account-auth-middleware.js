@@ -1,8 +1,9 @@
-// server\middleware\account-auth-middleware.js
+// server/middleware/account-auth-middleware.js
 
 const jwt = require('jsonwebtoken');
 const User = require('../models/user-db');
 const AccessTokenExpiredError = require('../errors/access-token-error');
+const UnauthorizedError = require('../errors/user-errors').UnauthorizedError;
 
 const ensureAccess = async (req, res, next) => {
     let token;
@@ -18,15 +19,15 @@ const ensureAccess = async (req, res, next) => {
             next();
         } catch (error) {
             if (error.name === 'TokenExpiredError') {
-                next(new AccessTokenExpiredError());
+                throw new AccessTokenExpiredError();
             } else {
-                res.status(401).json({ message: 'Not authorized, token failed' });
+                throw new UnauthorizedError('Not authorized, token failed');
             }
         }
     }
 
     if (!token) {
-        res.status(401).json({ message: 'Not authorized, no token' });
+        throw new UnauthorizedError('Not authorized, no token');
     }
 };
 
