@@ -8,14 +8,16 @@ const Header = () => {
   const navigate = useNavigate();
 
   const handleLogout = () => {
-    localStorage.removeItem('userInfo');
-    navigate('/login', { replace: true });
+    if (window.confirm('Are you sure you want to logout?')) {
+      localStorage.removeItem('userInfo');
+      navigate('/login', { replace: true });
 
-    // Prevent back navigation
-    window.history.pushState(null, null, window.location.href);
-    window.onpopstate = function () {
-      window.history.go(1);
-    };
+      // Prevent back navigation
+      window.history.pushState(null, null, window.location.href);
+      window.onpopstate = function () {
+        window.history.go(1);
+      };
+    }
   };
 
   return (
