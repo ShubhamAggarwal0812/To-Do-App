@@ -1,15 +1,15 @@
 // client/src/App.js
 
-import React from 'react';
-import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
-import HomeScreen from './pages/HomeScreen';
-import LoginScreen from './pages/LoginScreen';
-import RegisterScreen from './pages/RegisterScreen';
-import TodoScreen from './pages/TodoScreen';
-import AboutScreen from './pages/AboutScreen';
-import HelpScreen from './pages/HelpScreen';
-import Header from './components/Header';
-import Footer from './components/Footer';
+import React from "react";
+import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
+import HomeScreen from "./pages/home-screen";
+import LoginScreen from "./pages/login-screen";
+import RegisterScreen from "./pages/register-screen";
+import TodoScreen from "./pages/todo-screen";
+import AboutScreen from "./pages/about-screen";
+import HelpScreen from "./pages/help-screen";
+import Header from "./components/header-component";
+import Footer from "./components/footer-component";
 
 function App() {
   return (

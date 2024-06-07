@@ -1,9 +1,9 @@
 // client/src/components/TodoItem.js
 
-import React from 'react';
-import { FaEdit, FaTrashAlt, FaCheck, FaUndo } from 'react-icons/fa';
-import { motion } from 'framer-motion';
-import moment from 'moment';
+import React from "react";
+import { FaEdit, FaTrashAlt, FaCheck, FaUndo } from "react-icons/fa";
+import { motion } from "framer-motion";
+import moment from "moment";
 
 const TodoItem = ({ todo, handleEdit, handleDelete, handleToggleStatus }) => {
   return (
@@ -16,11 +16,18 @@ const TodoItem = ({ todo, handleEdit, handleDelete, handleToggleStatus }) => {
       <div>
         <h2 className="text-xl font-bold text-gray-800">{todo.title}</h2>
         <p className="text-gray-600">{todo.description}</p>
-        <p className="text-sm text-gray-500">{todo.type} - {new Date(todo.dueDate).toLocaleDateString()}</p>
+        <p className="text-sm text-gray-500">
+          {todo.type} - {new Date(todo.dueDate).toLocaleDateString()}
+        </p>
         <p className="text-sm text-gray-500">{todo.status}</p>
-        <p className="text-sm text-gray-500">Added: {moment(todo.createdAt).format('MMMM Do YYYY, h:mm:ss a')}</p>
-        {todo.status === 'Done' && (
-          <p className="text-sm text-gray-500">Completed: {moment(todo.updatedAt).format('MMMM Do YYYY, h:mm:ss a')}</p>
+        <p className="text-sm text-gray-500">
+          Added: {moment(todo.createdAt).format("MMMM Do YYYY, h:mm:ss a")}
+        </p>
+        {todo.status === "Done" && (
+          <p className="text-sm text-gray-500">
+            Completed:{" "}
+            {moment(todo.updatedAt).format("MMMM Do YYYY, h:mm:ss a")}
+          </p>
         )}
       </div>
       <div className="flex space-x-2">
@@ -37,10 +44,12 @@ const TodoItem = ({ todo, handleEdit, handleDelete, handleToggleStatus }) => {
           <FaTrashAlt />
         </button>
         <button
-          className={`${todo.status === 'Done' ? 'text-yellow-500' : 'text-green-500'} hover:underline`}
+          className={`${
+            todo.status === "Done" ? "text-yellow-500" : "text-green-500"
+          } hover:underline`}
           onClick={() => handleToggleStatus(todo._id)}
         >
-          {todo.status === 'Done' ? <FaUndo /> : <FaCheck />}
+          {todo.status === "Done" ? <FaUndo /> : <FaCheck />}
         </button>
       </div>
     </motion.li>

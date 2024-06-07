@@ -1,6 +1,6 @@
 // client/src/components/Filter.js
 
-import React from 'react';
+import React from "react";
 
 const Filter = ({ filter, handleFilterChange }) => (
   <div className="mb-6 w-full sm:w-1/2">

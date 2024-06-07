@@ -1,9 +1,15 @@
 // client/src/components/TodoList.js
 
-import React from 'react';
-import TodoItem from './TodoItem';
+import React from "react";
+import TodoItem from "./todo-item";
 
-const TodoList = ({ filteredTodos, handleEdit, handleDelete, handleToggleStatus, getPersonalizedMessage }) => {
+const TodoList = ({
+  filteredTodos,
+  handleEdit,
+  handleDelete,
+  handleToggleStatus,
+  getPersonalizedMessage,
+}) => {
   return (
     <div className="todo-list mx-auto w-full sm:w-1/2">
       <div className="text-center mb-6 text-xl text-gray-500">
