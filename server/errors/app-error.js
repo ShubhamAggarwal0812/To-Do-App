@@ -1,18 +1,20 @@
 // server\errors\app-error.js
 
 class AppError extends Error {
-  constructor(message, statusCode, cause) {
+  constructor(message, statusCode) {
     super(message);
     this.statusCode = statusCode;
-    this.cause = cause;
+    this.status = `${statusCode}`.startsWith("4") ? "fail" : "error";
+    this.isOperational = true;
+
     Error.captureStackTrace(this, this.constructor);
   }
 
   toJson() {
     return {
+      status: this.status,
       message: this.message,
       statusCode: this.statusCode,
-      ...(this.cause && { cause: this.cause.toString() }),
     };
   }
 }

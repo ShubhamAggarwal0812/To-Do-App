@@ -1,4 +1,4 @@
-// server\server.js
+// server/server.js
 
 const express = require("express");
 const dotenv = require("dotenv");
@@ -22,6 +22,7 @@ app.use("/api/users", userRoutes);
 // Todo routes
 app.use("/api/todos", todoRoutes);
 
+// Access token routes
 app.use("/api/access-tokens", accessTokenRoutes);
 
 // Error handling middleware

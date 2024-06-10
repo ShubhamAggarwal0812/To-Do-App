@@ -5,6 +5,7 @@ const { hashPassword } = require("../utils/account-util");
 const { generateToken } = require("../utils/token-util");
 const {
   UserValidationError,
+  UserAlreadyExistsError,
 } = require("../errors/user-errors");
 
 const createUser = async (req, res) => {
@@ -14,31 +15,38 @@ const createUser = async (req, res) => {
     const userExists = await User.findOne({ email });
 
     if (userExists) {
-      throw new UserValidationError("User already exists");
+      throw new UserAlreadyExistsError();
     }
 
     const hashedPassword = await hashPassword(password);
 
-    const user = await User.create({
+    const user = new User({
       firstName,
       lastName,
       email,
       password: hashedPassword,
     });
 
+    const savedUser = await user.save();
+
     res.status(201).json({
-      _id: user._id,
-      firstName: user.firstName,
-      lastName: user.lastName,
-      email: user.email,
-      token: generateToken(user._id),
+      _id: savedUser._id,
+      firstName: savedUser.firstName,
+      lastName: savedUser.lastName,
+      email: savedUser.email,
+      token: generateToken(savedUser._id),
     });
   } catch (error) {
     if (error.name === "ValidationError") {
-      const messages = Object.values(error.errors).map((val) => val.message);
-      throw new UserValidationError(messages.join(", "));
+      throw new UserValidationError();
+    } else if (
+      error instanceof UserAlreadyExistsError ||
+      error instanceof UserValidationError
+    ) {
+      res.status(error.statusCode).json({ message: error.message });
     } else {
-      throw error;
+      console.error("Unexpected Error:", error);
+      res.status(500).json({ message: "Failed to create user" });
     }
   }
 };

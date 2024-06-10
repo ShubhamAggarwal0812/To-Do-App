@@ -24,9 +24,7 @@ const ensureAccess = async (req, res, next) => {
         throw new UnauthorizedError("Not authorized, token failed");
       }
     }
-  }
-
-  if (!token) {
+  } else {
     throw new UnauthorizedError("Not authorized, no token");
   }
 };

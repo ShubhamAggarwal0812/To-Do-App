@@ -1,3 +1,5 @@
+// server/controllers/access-token-controller.js
+
 const User = require("../models/user-db");
 const { compareHash } = require("../utils/account-util");
 const { generateToken } = require("../utils/token-util");
@@ -10,7 +12,7 @@ const createAccessToken = async (req, res) => {
     const user = await User.findOne({ email });
 
     if (!user || !(await compareHash(password, user.password))) {
-      throw new UnauthorizedError("Invalid email or password");
+      throw new UnauthorizedError();
     }
 
     res.json({
@@ -21,7 +23,12 @@ const createAccessToken = async (req, res) => {
       token: generateToken(user._id),
     });
   } catch (error) {
-    throw error;
+    if (error instanceof UnauthorizedError) {
+      res.status(error.statusCode).json({ message: error.message });
+    } else {
+      console.error("Unexpected Error:", error);
+      res.status(500).json({ message: "Failed to generate access token" });
+    }
   }
 };
 
