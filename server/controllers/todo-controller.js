@@ -88,17 +88,18 @@ const toggleTodoStatus = async (req, res) => {
 
 const deleteTodo = async (req, res) => {
   try {
-    const todo = await Todo.findById(req.params.id);
+      const todo = await Todo.findById(req.params.id);
 
-    if (!todo || todo.user.toString() !== req.user.id) {
-      throw new TodoNotFoundError();
-    }
+      if (!todo || todo.user.toString() !== req.user.id) {
+          throw new TodoNotFoundError();
+      }
 
-    todo.active = false;
-    const updatedTodo = await todo.save();
-    res.json({ message: "Todo removed", todo: updatedTodo });
+      // Soft delete the todo by setting active to false
+      todo.active = false;
+      await todo.save();
+      res.status(204).send(); // Return 204 No Content
   } catch (error) {
-    throw error;
+      throw error;
   }
 };
 
