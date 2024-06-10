@@ -1,6 +1,7 @@
-// server\models\todo-db.js
+// server/models/todo-db.js
 
 const mongoose = require("mongoose");
+const { TODO_STATUS, TODO_TYPE } = require("../constants");
 
 const todoSchema = mongoose.Schema(
   {
@@ -20,14 +21,14 @@ const todoSchema = mongoose.Schema(
     type: {
       type: String,
       required: true,
-      enum: ["Personal", "Official", "Hobby"],
-      default: "Personal",
+      enum: Object.values(TODO_TYPE),
+      default: TODO_TYPE.PERSONAL,
     },
     status: {
       type: String,
       required: true,
-      enum: ["To Do", "Done"],
-      default: "To Do",
+      enum: Object.values(TODO_STATUS),
+      default: TODO_STATUS.TODO,
     },
     dueDate: {
       type: Date,
@@ -42,6 +43,9 @@ const todoSchema = mongoose.Schema(
     timestamps: true,
   }
 );
+
+// Add additional indexes if needed
+todoSchema.index({ dueDate: 1 });
 
 const Todo = mongoose.models.Todo || mongoose.model("Todo", todoSchema);
 

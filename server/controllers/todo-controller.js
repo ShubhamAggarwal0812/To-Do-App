@@ -2,6 +2,7 @@
 
 const Todo = require("../models/todo-db");
 const { TodoNotFoundError } = require("../errors/todo-errors");
+const { TODO_STATUS } = require("../constants");
 
 const getTodos = async (req, res) => {
   try {
@@ -77,7 +78,8 @@ const toggleTodoStatus = async (req, res) => {
       throw new TodoNotFoundError();
     }
 
-    todo.status = todo.status === "To Do" ? "Done" : "To Do";
+    todo.status =
+      todo.status === TODO_STATUS.TODO ? TODO_STATUS.DONE : TODO_STATUS.TODO;
 
     const updatedTodo = await todo.save();
     res.json(updatedTodo);
@@ -88,18 +90,17 @@ const toggleTodoStatus = async (req, res) => {
 
 const deleteTodo = async (req, res) => {
   try {
-      const todo = await Todo.findById(req.params.id);
+    const todo = await Todo.findById(req.params.id);
 
-      if (!todo || todo.user.toString() !== req.user.id) {
-          throw new TodoNotFoundError();
-      }
+    if (!todo || todo.user.toString() !== req.user.id) {
+      throw new TodoNotFoundError();
+    }
 
-      // Soft delete the todo by setting active to false
-      todo.active = false;
-      await todo.save();
-      res.status(204).send(); // Return 204 No Content
+    todo.active = false;
+    await todo.save();
+    res.status(204).send();
   } catch (error) {
-      throw error;
+    throw error;
   }
 };
 
